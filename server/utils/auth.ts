@@ -110,11 +110,3 @@ export function setDisplayName(event: H3Event, user: SessionUser, name: string) 
 export function endSession(event: H3Event) {
   deleteCookie(event, SESSION_COOKIE, { path: '/' })
 }
-
-/**
- * Aceita só caminhos internos (ex.: "/cursos"), para o `?next=` não virar redirecionamento aberto.
- * Recusa "//site" e também "/\site", que o navegador lê como "//site".
- */
-export function safeNextPath(value: unknown): string {
-  return typeof value === 'string' && /^\/(?![/\\])/.test(value) ? value : '/'
-}

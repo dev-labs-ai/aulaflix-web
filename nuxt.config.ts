@@ -17,6 +17,8 @@ export default defineNuxtConfig({
   // The reference app runs on 3000, so both can run side by side.
   devServer: { port: 3001 },
   compatibilityDate: '2025-07-15',
+  // O cadastro passou a fazer parte de /entrar, que pergunta o e-mail primeiro.
+  routeRules: { '/cadastrar': { redirect: { to: '/entrar', statusCode: 307 } } },
   vite: { plugins: [tailwindcss()] },
   // The reference app compiles without noUncheckedIndexedAccess, and the code ported from it
   // (shared/content unchanged, the data layer in server/utils) relies on that.

@@ -57,8 +57,9 @@ As rotas entram nesta tabela à medida que são portadas.
 | `/como-funciona` | `app/pages/como-funciona.vue` |
 | `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
 | `/cursos/[slug]` (7 cursos) | `app/pages/cursos/[slug].vue`, com as partes em `app/components/curso/` |
+| `/entrar` (entrar e criar conta) | `app/pages/entrar.vue` (sem header/rodapé), com o fluxo em `app/components/auth/` |
 
-O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria. O mesmo vale para o 404 que uma página dispara (ex.: curso que não existe), onde o app de referência repete header e rodapé (#21).
+O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria. O mesmo vale para o 404 que uma página dispara (ex.: curso que não existe), onde o app de referência repete header e rodapé (#21). As telas de autenticação ficam sem header e rodapé (`layout: false`). `/cadastrar` redireciona para `/entrar` (`routeRules` em `nuxt.config.ts`).
 
 ## Onde mudar as coisas
 
@@ -83,7 +84,7 @@ Direção "Lousa": a sala de aula como referência. Fundo de papel, texto em gra
 
 ## Login e cadastro
 
-Para a conta de demonstração, use **aulaflix@email.com** com a senha **aulaflix**. A sessão fica num cookie `httpOnly` por 7 dias; com ela, o header mostra o usuário e o menu da conta, com Meus cursos, Conta e Sair. Os cookies têm os mesmos nomes, formatos e prazos do app de referência, então uma sessão aberta num app vale no outro.
+`/entrar` começa pelo e-mail. Se já existe conta, pede a senha; se não existe, pede nome e senha e cria a conta na hora. Para a conta de demonstração, use **aulaflix@email.com** com a senha **aulaflix**. Tudo é conferido no servidor (rotas em `server/api/auth/`) e a sessão fica num cookie `httpOnly` por 7 dias; com ela, o header mostra o usuário e o menu da conta, com Meus cursos, Conta e Sair. `/entrar?next=/caminho` define para onde ir depois de entrar. Os cookies têm os mesmos nomes, formatos e prazos do app de referência, então uma sessão aberta num app vale no outro.
 
 A conta criada no cadastro fica num cookie deste navegador (com a senha em hash), e só uma por vez: um novo cadastro substitui a anterior. Ela começa sem cursos e com o e-mail por confirmar; enquanto isso, uma faixa abaixo do header (`app/components/EmailConfirmationNotice.vue`) pede a confirmação, sem bloquear nada, e oferece um botão de protótipo que faz o papel do link do e-mail.
 
