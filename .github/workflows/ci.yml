@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+# The job only reads the repository; artifacts upload with their own token.
+permissions:
+  contents: read
+
 jobs:
   ci:
     name: Lint, typecheck, build and e2e
