@@ -2,7 +2,7 @@
 
 Protótipo do site do Aulaflix, uma plataforma de cursos online para desenvolvedores de software (backend, frontend, banco de dados, DevOps, IA e outras áreas). A estrutura das páginas partiu de uma réplica de [programe.ai](https://programe.ai/); a identidade visual é própria (veja abaixo). Textos e cursos são conteúdo de exemplo e as capas são placeholders.
 
-Este repositório porta o protótipo de Next.js 16 para Nuxt 4. O app de referência é [`dev-labs-ai/aulaflix`](https://github.com/dev-labs-ai/aulaflix): até o porte chegar à paridade, os dois rodam lado a lado e a mesma suíte e2e roda contra os dois. As convenções do porte estão em `CLAUDE.md`.
+O protótipo começou em Next.js, em [`dev-labs-ai/aulaflix`](https://github.com/dev-labs-ai/aulaflix) (arquivado), e foi portado para Nuxt 4 com as mesmas páginas, textos e endereços.
 
 Stack: Nuxt 4 (Vue 3, SSR com servidor Nitro) · Tailwind CSS v4 · TypeScript · @lucide/vue · Playwright.
 
@@ -16,31 +16,15 @@ pnpm lint
 pnpm typecheck
 ```
 
-### Lado a lado com o app de referência
-
-O app de referência roda na porta 3000 e este, na 3001:
-
-```bash
-# num clone de dev-labs-ai/aulaflix
-pnpm install
-pnpm dev        # http://localhost:3000
-
-# neste repositório
-pnpm dev        # http://localhost:3001
-```
-
-No `localhost`, os cookies valem para as duas portas: uma sessão aberta num app vale no outro.
-
 ### Testes e2e
 
-Os testes ficam em `tests/e2e/` e rodam contra qualquer um dos dois apps: só muda o endereço base, em `BASE_URL`.
+Os testes ficam em `tests/e2e/` e rodam contra o app em `BASE_URL` (por padrão, `http://localhost:3001`).
 
 ```bash
-pnpm exec playwright install chromium            # uma vez
+pnpm exec playwright install chromium     # uma vez
 
-BASE_URL=http://localhost:3000 pnpm test:e2e     # app de referência
-BASE_URL=http://localhost:3001 pnpm test:e2e     # este app, já rodando na 3001
-pnpm test:e2e                                    # este app: reusa o que estiver na 3001 ou serve a build de produção (rode pnpm build antes)
+pnpm test:e2e                             # reusa o que estiver na 3001 ou serve a build de produção (rode pnpm build antes)
+BASE_URL=<endereço> pnpm test:e2e         # contra o app já rodando em outro endereço
 ```
 
 Os testes entram na conta definindo o cookie de sessão, como faz `signIn` em `tests/e2e/helpers.ts`; só os testes de login e cadastro passam por `/entrar`.
@@ -48,8 +32,6 @@ Os testes entram na conta definindo o cookie de sessão, como faz `signIn` em `t
 O CI (`.github/workflows/ci.yml`) roda lint, typecheck, build e e2e em cada pull request.
 
 ## Rotas
-
-As rotas entram nesta tabela à medida que são portadas.
 
 | Rota | Arquivo |
 | --- | --- |
@@ -66,7 +48,7 @@ As rotas entram nesta tabela à medida que são portadas.
 | `/entrar` (entrar e criar conta) | `app/pages/entrar.vue` (sem header/rodapé), com o fluxo em `app/components/auth/` |
 | `/redefinir-senha` | `app/pages/redefinir-senha.vue` (sem header/rodapé), com o fluxo em `app/components/auth/PasswordResetFlow.vue` |
 
-O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria. O mesmo vale para o 404 que uma página dispara (ex.: curso que não existe), onde o app de referência repete header e rodapé (#21). As telas de autenticação ficam sem header e rodapé (`layout: false`). `/cadastrar` redireciona para `/entrar`, e os endereços antigos `/compras` e `/configuracoes` para as abas de `/conta` (`routeRules` em `nuxt.config.ts`).
+O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria. O mesmo vale para o 404 que uma página dispara (ex.: curso que não existe). As telas de autenticação ficam sem header e rodapé (`layout: false`). `/cadastrar` redireciona para `/entrar`, e os endereços antigos `/compras` e `/configuracoes` para as abas de `/conta` (`routeRules` em `nuxt.config.ts`).
 
 ## Onde mudar as coisas
 
@@ -91,11 +73,11 @@ Direção "Lousa": a sala de aula como referência. Fundo de papel, texto em gra
 
 ## Login e cadastro
 
-`/entrar` começa pelo e-mail. Se já existe conta, pede a senha; se não existe, pede nome e senha e cria a conta na hora. Para a conta de demonstração, use **aulaflix@email.com** com a senha **aulaflix**. Tudo é conferido no servidor (rotas em `server/api/auth/`) e a sessão fica num cookie `httpOnly` por 7 dias; com ela, o header mostra o usuário e o menu da conta, com Meus cursos, Conta e Sair. `/entrar?next=/caminho` define para onde ir depois de entrar. Os cookies têm os mesmos nomes, formatos e prazos do app de referência, então uma sessão aberta num app vale no outro.
+`/entrar` começa pelo e-mail. Se já existe conta, pede a senha; se não existe, pede nome e senha e cria a conta na hora. Para a conta de demonstração, use **aulaflix@email.com** com a senha **aulaflix**. Tudo é conferido no servidor (rotas em `server/api/auth/`) e a sessão fica num cookie `httpOnly` por 7 dias; com ela, o header mostra o usuário e o menu da conta, com Meus cursos, Conta e Sair. `/entrar?next=/caminho` define para onde ir depois de entrar.
 
 A conta criada no cadastro fica num cookie deste navegador (com a senha em hash), e só uma por vez: um novo cadastro substitui a anterior. Ela começa sem cursos e com o e-mail por confirmar; enquanto isso, uma faixa abaixo do header (`app/components/EmailConfirmationNotice.vue`) pede a confirmação, sem bloquear nada, e oferece um botão de protótipo que faz o papel do link do e-mail.
 
-As contas e a sessão ficam em `server/utils/auth.ts`; os cursos e o progresso inicial da conta de demonstração, em `server/utils/enrollments.ts` (as aulas concluídas e a última aula aberta de cada curso ficam em cookies deste navegador; é daí que sai o "Continuar de onde parou"), e os pedidos, em `server/utils/purchases.ts` (os feitos em `/cursos/[slug]/comprar` também ficam num cookie). Os cursos do aluno são os que aparecem nos pedidos dele. Páginas só para quem está logado usam o middleware `auth` (`app/middleware/auth.ts`), que manda para `/entrar?next=…`. Em Conta, o nome editado fica num cookie e aparece no header; a troca de senha é só simulada (a senha continua a mesma). As páginas sabem quem entrou por `/api/auth/session` (`app/composables/useSessionUser.ts`), e cada Server Action do app de referência virou uma rota em `server/api/`, chamada com `$fetch` e seguida de `refreshNuxtData()` (`docs/adr/0002-server-actions-become-api-routes.md`). É uma simulação: o cookie guarda só o e-mail e não é protegido contra falsificação, então deve ser substituído por um backend de autenticação real (`docs/adr/0001-keep-the-simulated-backend.md`).
+As contas e a sessão ficam em `server/utils/auth.ts`; os cursos e o progresso inicial da conta de demonstração, em `server/utils/enrollments.ts` (as aulas concluídas e a última aula aberta de cada curso ficam em cookies deste navegador; é daí que sai o "Continuar de onde parou"), e os pedidos, em `server/utils/purchases.ts` (os feitos em `/cursos/[slug]/comprar` também ficam num cookie). Os cursos do aluno são os que aparecem nos pedidos dele. Páginas só para quem está logado usam o middleware `auth` (`app/middleware/auth.ts`), que manda para `/entrar?next=…`. Em Conta, o nome editado fica num cookie e aparece no header; a troca de senha é só simulada (a senha continua a mesma). As páginas sabem quem entrou por `/api/auth/session` (`app/composables/useSessionUser.ts`), e cada ação que muda dados (entrar, comprar, concluir uma aula, entrar na lista de espera) é uma rota em `server/api/`, chamada com `$fetch` e seguida de `refreshNuxtData()` (`docs/adr/0002-server-actions-become-api-routes.md`). É uma simulação: o cookie guarda só o e-mail e não é protegido contra falsificação, então deve ser substituído por um backend de autenticação real (`docs/adr/0001-keep-the-simulated-backend.md`).
 
 ## Limitações do protótipo
 
