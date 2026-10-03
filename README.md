@@ -51,6 +51,10 @@ O CI (`.github/workflows/ci.yml`) roda lint, typecheck, build e e2e em cada pull
 
 As rotas entram nesta tabela à medida que são portadas.
 
+| Rota | Arquivo |
+| --- | --- |
+| `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
+
 O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria.
 
 ## Onde mudar as coisas
@@ -64,14 +68,14 @@ O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/Site
 - **Cores, raios, sombras, animações:** `app/assets/css/globals.css` (tokens `@theme` do Tailwind)
 - **Fontes:** `fonts` em `nuxt.config.ts` e `app/assets/css/fonts.css` (Bricolage Grotesque nos títulos, Atkinson Hyperlegible Next no texto)
 - **Logo e favicon:** `app/components/Logo.vue` (com a marca em `app/components/LogoMark.vue`) e `public/icon.svg`
-- **Imagens:** `app/components/CourseCoverPlaceholder.vue` gera os placeholders, com os ícones e as cores de cada curso em `app/utils/placeholders.ts`.
+- **Imagens:** `app/components/CourseCoverPlaceholder.vue` gera os placeholders, com os ícones e as cores de cada curso em `app/utils/placeholders.ts`. Para usar uma capa real de curso, coloque o arquivo em `public/` e preencha `image` no curso em `courses.ts` (`app/components/CourseCover.vue` passa a mostrá-la).
 
 ## Identidade visual
 
 Direção "Lousa": a sala de aula como referência. Fundo de papel, texto em grafite e verde de quadro-negro como cor principal.
 
 - **Lousa:** painel verde com a régua de madeira embaixo (`app/components/Board.vue`), usado no topo da home (com os botões de área, que abrem o catálogo filtrado), da página de curso (com o título, o preço e o botão de compra) e no "Continuar de onde parou" de Meus cursos. Os títulos aparecem como se fossem escritos a giz.
-- **Fichas pautadas:** os cursos são fichas com linhas a cada 28px (`pautado`) e uma faixa no topo na cor do curso (`tone` em `courses.ts`: coral, amarelo ou sálvia). Nos cursos em lista de espera, a faixa é tracejada (`tracejado`).
+- **Fichas pautadas:** os cursos são fichas com linhas a cada 28px (`pautado`) e uma faixa no topo na cor do curso (`tone` em `courses.ts`: coral, amarelo ou sálvia), em `app/components/CourseCards.vue`. Nos cursos em lista de espera, a faixa é tracejada (`tracejado`).
 - **Giz amarelo:** botão principal sobre a lousa, avatar, marcadores e selos de destaque.
 
 ## Login e cadastro
