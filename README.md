@@ -57,6 +57,7 @@ As rotas entram nesta tabela à medida que são portadas.
 | `/como-funciona` | `app/pages/como-funciona.vue` |
 | `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
 | `/cursos/[slug]` (7 cursos) | `app/pages/cursos/[slug].vue`, com as partes em `app/components/curso/` |
+| `/meus-cursos` (só logado) | `app/pages/meus-cursos.vue`, com os dados de `server/api/enrollments.get.ts` |
 | `/entrar` (entrar e criar conta) | `app/pages/entrar.vue` (sem header/rodapé), com o fluxo em `app/components/auth/` |
 | `/redefinir-senha` | `app/pages/redefinir-senha.vue` (sem header/rodapé), com o fluxo em `app/components/auth/PasswordResetFlow.vue` |
 
@@ -89,7 +90,7 @@ Direção "Lousa": a sala de aula como referência. Fundo de papel, texto em gra
 
 A conta criada no cadastro fica num cookie deste navegador (com a senha em hash), e só uma por vez: um novo cadastro substitui a anterior. Ela começa sem cursos e com o e-mail por confirmar; enquanto isso, uma faixa abaixo do header (`app/components/EmailConfirmationNotice.vue`) pede a confirmação, sem bloquear nada, e oferece um botão de protótipo que faz o papel do link do e-mail.
 
-As contas e a sessão ficam em `server/utils/auth.ts`; os cursos e o progresso inicial da conta de demonstração, em `server/utils/enrollments.ts` (as aulas concluídas e a última aula aberta de cada curso ficam em cookies deste navegador; é daí que sai o "Continuar de onde parou"), e os pedidos, em `server/utils/purchases.ts` (os feitos em `/cursos/[slug]/comprar` também ficam num cookie). Os cursos do aluno são os que aparecem nos pedidos dele. As páginas sabem quem entrou por `/api/auth/session` (`app/composables/useSessionUser.ts`), e cada Server Action do app de referência virou uma rota em `server/api/`, chamada com `$fetch` e seguida de `refreshNuxtData()` (`docs/adr/0002-server-actions-become-api-routes.md`). É uma simulação: o cookie guarda só o e-mail e não é protegido contra falsificação, então deve ser substituído por um backend de autenticação real (`docs/adr/0001-keep-the-simulated-backend.md`).
+As contas e a sessão ficam em `server/utils/auth.ts`; os cursos e o progresso inicial da conta de demonstração, em `server/utils/enrollments.ts` (as aulas concluídas e a última aula aberta de cada curso ficam em cookies deste navegador; é daí que sai o "Continuar de onde parou"), e os pedidos, em `server/utils/purchases.ts` (os feitos em `/cursos/[slug]/comprar` também ficam num cookie). Os cursos do aluno são os que aparecem nos pedidos dele. Páginas só para quem está logado usam o middleware `auth` (`app/middleware/auth.ts`), que manda para `/entrar?next=…`. As páginas sabem quem entrou por `/api/auth/session` (`app/composables/useSessionUser.ts`), e cada Server Action do app de referência virou uma rota em `server/api/`, chamada com `$fetch` e seguida de `refreshNuxtData()` (`docs/adr/0002-server-actions-become-api-routes.md`). É uma simulação: o cookie guarda só o e-mail e não é protegido contra falsificação, então deve ser substituído por um backend de autenticação real (`docs/adr/0001-keep-the-simulated-backend.md`).
 
 ## Limitações do protótipo
 
