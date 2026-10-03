@@ -3,6 +3,9 @@ import { expect, test, type Page } from '@playwright/test'
 /** The demo account, as the reference app's simulated backend knows it. */
 export const demoAccount = { name: 'Aluno Aulaflix', email: 'aulaflix@email.com', initials: 'AA' }
 
+/** An email too long for one line at 390px, to check that it wraps instead of scrolling the page sideways. */
+export const longEmail = 'uma.pessoa.com.um.endereco.de.email.bem.comprido@exemplo-de-dominio.com.br'
+
 type NuxtRoot = Element & { __vue_app__?: { $nuxt?: { isHydrating?: boolean } } }
 
 /**

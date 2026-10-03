@@ -6,6 +6,7 @@ import {
   getCookie,
   gotoHydrated,
   jsonCookie,
+  longEmail,
   setCookie,
   signIn,
 } from './helpers'
@@ -202,6 +203,16 @@ test.describe('email confirmation notice', () => {
     await expect(notice.locator('strong')).toHaveText(createdAccount.email)
     await expect(page.getByRole('button', { name: 'Reenviar link' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Protótipo: simular o clique no link' })).toBeVisible()
+    await expectNoHorizontalScroll(page)
+  })
+
+  test('a long email wraps without horizontal scroll on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await setCookie(page, 'aulaflix_account', jsonCookie.encode({ ...createdAccount, email: longEmail }))
+    await signIn(page, longEmail)
+    await page.goto(shellPath)
+
+    await expect(page.getByText(`Confirme seu e-mail: mandamos um link para ${longEmail}.`)).toBeVisible()
     await expectNoHorizontalScroll(page)
   })
 

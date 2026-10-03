@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test'
-import { demoAccount, expectNoHorizontalScroll, getCookie, gotoHydrated, jsonCookie, setCookie, signIn } from './helpers'
+import { demoAccount, expectNoHorizontalScroll, getCookie, gotoHydrated, jsonCookie, longEmail, setCookie, signIn } from './helpers'
 
 const slug = 'devops-na-pratica'
 const coursePath = `/cursos/${slug}`
@@ -88,11 +88,10 @@ test.describe('waitlist signed out', () => {
     await page.setViewportSize({ width: 390, height: 844 })
     await gotoHydrated(page, coursePath)
 
-    const email = 'uma.pessoa.com.um.endereco.de.email.bem.comprido@exemplo-de-dominio.com.br'
-    await page.getByLabel('E-mail').fill(email)
+    await page.getByLabel('E-mail').fill(longEmail)
     await joinButton(page).click()
 
-    await expect(page.getByText(confirmation(email))).toBeVisible()
+    await expect(page.getByText(confirmation(longEmail))).toBeVisible()
     await expectNoHorizontalScroll(page)
   })
 })
