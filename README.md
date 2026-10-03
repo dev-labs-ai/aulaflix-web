@@ -53,6 +53,8 @@ As rotas entram nesta tabela à medida que são portadas.
 
 | Rota | Arquivo |
 | --- | --- |
+| `/` | `app/pages/index.vue` |
+| `/como-funciona` | `app/pages/como-funciona.vue` |
 | `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
 
 O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria.
