@@ -40,9 +40,8 @@ test.describe('lesson page, signed out', () => {
       expect(response.headers().location).toBe(`/entrar?next=${encodeURIComponent(path)}`)
     }
 
-    // The port's address bar shows `next` decoded (#28).
-    await page.goto(lessonPath('sua-primeira-rota'))
-    await expect(page).toHaveURL(url => url.pathname === '/entrar' && url.searchParams.get('next') === lessonPath('sua-primeira-rota'))
+    await gotoHydrated(page, lessonPath('sua-primeira-rota'))
+    await expect(page).toHaveURL(`/entrar?next=${encodeURIComponent(lessonPath('sua-primeira-rota'))}`)
     await expect(page.getByRole('heading', { level: 1, name: 'Entre ou crie sua conta' })).toBeVisible()
   })
 

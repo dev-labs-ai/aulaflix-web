@@ -31,9 +31,8 @@ test.describe('account, signed out', () => {
       expect(response.headers().location).toBe(`/entrar?next=${encodeURIComponent(path)}`)
     }
 
-    // The port's address bar shows `next` decoded (#28).
-    await page.goto('/conta/compras')
-    await expect(page).toHaveURL(url => url.pathname === '/entrar' && url.searchParams.get('next') === '/conta/compras')
+    await gotoHydrated(page, '/conta/compras')
+    await expect(page).toHaveURL('/entrar?next=%2Fconta%2Fcompras')
     await expect(page.getByRole('heading', { level: 1, name: 'Entre ou crie sua conta' })).toBeVisible()
   })
 })

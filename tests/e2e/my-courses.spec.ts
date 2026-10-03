@@ -32,8 +32,8 @@ async function signInWithCreatedAccount(page: Page, purchases: string[] = []) {
 const publishedLessons = (slug: string) =>
   courseLessons(courseDetails[slug] as OnSaleCourseDetail).filter(entry => entry.lesson.duration).map(entry => entry.slug)
 
-/** On /entrar with `?next=` set to this page. The port's address bar shows `next` decoded (#28). */
-const onSignIn = (url: URL) => url.pathname === '/entrar' && url.searchParams.get('next') === path
+/** /entrar with `?next=` set to this page, encoded as the redirect sends it. */
+const onSignIn = '/entrar?next=%2Fmeus-cursos'
 
 const highlight = (page: Page) => page.getByRole('region', { name: 'Continuar de onde parou' })
 const cards = (page: Page) => page.getByRole('main').getByRole('listitem')
@@ -48,7 +48,7 @@ test.describe('my courses, signed out', () => {
     expect(response.status()).toBe(307)
     expect(response.headers().location).toBe('/entrar?next=%2Fmeus-cursos')
 
-    await page.goto(`${path}?aba=1`)
+    await gotoHydrated(page, `${path}?aba=1`)
     await expect(page).toHaveURL(onSignIn)
     await expect(page.getByRole('heading', { level: 1, name: 'Entre ou crie sua conta' })).toBeVisible()
   })
@@ -58,7 +58,7 @@ test.describe('my courses, signed out', () => {
     const response = await page.request.get(path, { maxRedirects: 0 })
     expect(response.headers().location).toBe('/entrar?next=%2Fmeus-cursos')
 
-    await page.goto(path)
+    await gotoHydrated(page, path)
     await expect(page).toHaveURL(onSignIn)
   })
 
