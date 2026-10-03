@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 
-// The suite runs against either app: this one (default) or the reference app, e.g. BASE_URL=http://localhost:3000.
+// The suite runs against this app on 3001 by default, or against an app already running elsewhere through BASE_URL.
 const baseURL = process.env.BASE_URL ?? 'http://localhost:3001'
 
 export default defineConfig({
