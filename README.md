@@ -56,14 +56,15 @@ As rotas entram nesta tabela à medida que são portadas.
 | `/` | `app/pages/index.vue` |
 | `/como-funciona` | `app/pages/como-funciona.vue` |
 | `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
+| `/cursos/[slug]` (7 cursos) | `app/pages/cursos/[slug].vue`, com as partes em `app/components/curso/` |
 
-O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria.
+O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria. O mesmo vale para o 404 que uma página dispara (ex.: curso que não existe), onde o app de referência repete header e rodapé (#21).
 
 ## Onde mudar as coisas
 
 - **Marca, título e descrição do site, menu:** `shared/content/site.ts`
 - **Lista de cursos (título, área, resumo, status, ícone, cor, capa) e áreas do filtro do catálogo:** `shared/content/courses.ts`
-- **Conteúdo de cada curso (ementa, aula grátis, preços, FAQ do curso):** `shared/content/course-details/<slug>.ts`
+- **Conteúdo de cada curso (ementa, aula grátis, preços, FAQ do curso):** `shared/content/course-details/<slug>.ts`. A aula marcada com `free: true` aparece no player da página do curso.
 - **Como funciona (passos, lista de espera e dúvidas que valem para todos os cursos):** `shared/content/how-it-works.ts`. Cada passo tem o resumo da home (`summary`) e o texto da página `/como-funciona` (`details`). As dúvidas de um curso só ficam no `faq` dele; as que valem para todos, em `platformFaq`.
 - **Home:** os botões de área da lousa saem de `areas` em `shared/content/courses.ts`, com os ícones de `areaIcons` em `app/utils/placeholders.ts`.
 - **Login, cadastro e redefinição de senha (textos, mensagens de erro, regras de senha e código):** `shared/content/auth.ts`
