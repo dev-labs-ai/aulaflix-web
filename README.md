@@ -58,6 +58,8 @@ As rotas entram nesta tabela à medida que são portadas.
 | `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
 | `/cursos/[slug]` (7 cursos) | `app/pages/cursos/[slug].vue`, com as partes em `app/components/curso/` |
 | `/meus-cursos` (só logado) | `app/pages/meus-cursos.vue`, com os dados de `server/api/enrollments.get.ts` |
+| `/aprender/[curso]` (só para quem tem o curso) | `app/pages/aprender/[curso]/index.vue`, que leva à aula onde o aluno parou |
+| `/aprender/[curso]/[aula]` (só para quem tem o curso) | `app/pages/aprender/[curso]/[aula].vue`, com as partes em `app/components/aula/` e as rotas em `server/api/learning/` |
 | `/entrar` (entrar e criar conta) | `app/pages/entrar.vue` (sem header/rodapé), com o fluxo em `app/components/auth/` |
 | `/redefinir-senha` | `app/pages/redefinir-senha.vue` (sem header/rodapé), com o fluxo em `app/components/auth/PasswordResetFlow.vue` |
 
@@ -67,7 +69,7 @@ O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/Site
 
 - **Marca, título e descrição do site, menu:** `shared/content/site.ts`
 - **Lista de cursos (título, área, resumo, status, ícone, cor, capa) e áreas do filtro do catálogo:** `shared/content/courses.ts`
-- **Conteúdo de cada curso (ementa, aula grátis, preços, FAQ do curso):** `shared/content/course-details/<slug>.ts`. A aula marcada com `free: true` aparece no player da página do curso.
+- **Conteúdo de cada curso (ementa, aula grátis, preços, FAQ do curso):** `shared/content/course-details/<slug>.ts`. A aula marcada com `free: true` aparece no player da página do curso. O endereço de cada aula em `/aprender` sai do título (`lessonSlug` em `shared/content/course-details/index.ts`).
 - **Como funciona (passos, lista de espera e dúvidas que valem para todos os cursos):** `shared/content/how-it-works.ts`. Cada passo tem o resumo da home (`summary`) e o texto da página `/como-funciona` (`details`). As dúvidas de um curso só ficam no `faq` dele; as que valem para todos, em `platformFaq`.
 - **Home:** os botões de área da lousa saem de `areas` em `shared/content/courses.ts`, com os ícones de `areaIcons` em `app/utils/placeholders.ts`.
 - **Login, cadastro e redefinição de senha (textos, mensagens de erro, regras de senha e código):** `shared/content/auth.ts`
