@@ -6,16 +6,11 @@ const course = 'backend-com-node-js'
 const path = `/cursos/${course}/comprar`
 const firstLesson = `/aprender/${course}/como-funciona-uma-requisicao-http`
 
-/** An account created at sign-up, stored as the reference app stores it. It starts with no courses. */
-const createdAccount = {
-  name: 'Maria Souza',
-  email: 'maria@exemplo.com',
-  password: 'senha-da-maria',
-}
+/** An account created at sign-up, stored as the reference app stores it, with 'senha-da-maria'. It starts with no courses. */
+const createdAccount = { name: 'Maria Souza', email: 'maria@exemplo.com' }
 const createdAccountCookie = jsonCookie.encode({
-  name: createdAccount.name,
-  email: createdAccount.email,
-  passwordHash: createHash('sha256').update(createdAccount.password).digest('hex'),
+  ...createdAccount,
+  passwordHash: createHash('sha256').update('senha-da-maria').digest('hex'),
   verified: true,
 })
 
@@ -110,7 +105,7 @@ test.describe('identification', () => {
     await page.getByLabel('E-mail').fill(createdAccount.email)
     await page.getByRole('button', { name: 'Continuar', exact: true }).click()
     await expect(page.getByRole('heading', { level: 2, name: 'Que bom ver você de novo' })).toBeVisible()
-    await page.getByLabel('Senha', { exact: true }).fill(createdAccount.password)
+    await page.getByLabel('Senha', { exact: true }).fill('senha-da-maria')
     await page.getByRole('button', { name: 'Entrar', exact: true }).click()
 
     await expect(page.getByRole('heading', { level: 2, name: 'Pagamento' })).toBeVisible()
