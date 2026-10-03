@@ -35,3 +35,15 @@ export async function confirmEmail() {
   await $fetch('/api/auth/confirm-email', { method: 'POST' })
   await refreshNuxtData()
 }
+
+/** Conta: troca o nome exibido, que o header passa a mostrar. Devolve a mensagem de erro, ou `null` quando salvou. */
+export async function updateName(name: string) {
+  const result = await $fetch('/api/auth/update-name', { method: 'POST', body: { name } })
+  if ('redirect' in result) {
+    await signInAgain(result.redirect)
+    return null
+  }
+  if (result.error) return result.error
+  await refreshNuxtData()
+  return null
+}
