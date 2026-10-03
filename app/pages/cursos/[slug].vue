@@ -22,7 +22,11 @@ const freeLesson = onSaleDetail && getFreeLesson(onSaleDetail)
 const freeLessonHref = freeLesson && `#${freeLessonId}`
 const buyHref = `/cursos/${slug}/comprar`
 
-const { data: enrollment } = await useFetch(`/api/courses/${slug}/enrollment`, { key: `enrollment-${slug}` })
+const [{ data: user }, { data: enrollment }, { data: waitlist }] = await Promise.all([
+  useSessionUser(),
+  useFetch(`/api/courses/${slug}/enrollment`, { key: `enrollment-${slug}` }),
+  useFetch(`/api/courses/${slug}/waitlist`, { key: `waitlist-${slug}` }),
+])
 const owned = computed(() => Boolean(enrollment.value?.owned))
 </script>
 
@@ -43,7 +47,16 @@ const owned = computed(() => Boolean(enrollment.value?.owned))
             :buy-href="buyHref"
             :free-lesson-href="freeLessonHref"
           />
-          <!-- The waitlist form (one click when signed in, the email otherwise) comes with its own ticket (#8). -->
+          <WaitlistOneClick
+            v-else-if="user"
+            :course-slug="slug"
+            :email="user.email"
+            :joined="Boolean(waitlist?.joined)"
+          />
+          <WaitlistEmail
+            v-else
+            :course-slug="slug"
+          />
         </CourseBoard>
       </div>
 
