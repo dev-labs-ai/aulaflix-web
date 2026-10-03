@@ -1,0 +1,31 @@
+<!-- Marca: uma lousinha com duas linhas de giz e a régua de madeira (igual a public/icon.svg). -->
+<template>
+  <svg
+    viewBox="0 0 32 32"
+    aria-hidden="true"
+    class="block size-8"
+  >
+    <rect
+      width="32"
+      height="32"
+      rx="8"
+      fill="#8a6a4a"
+    />
+    <path
+      d="M8 0h16a8 8 0 0 1 8 8v16H0V8a8 8 0 0 1 8-8z"
+      fill="#22392e"
+    />
+    <path
+      d="M7.5 10.5h13"
+      stroke="#f2d06b"
+      stroke-width="3"
+      stroke-linecap="round"
+    />
+    <path
+      d="M7.5 17h8.5"
+      stroke="#f1f3ee"
+      stroke-width="3"
+      stroke-linecap="round"
+    />
+  </svg>
+</template>

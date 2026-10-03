@@ -1,0 +1,151 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-atkinson), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+}
+
+@theme {
+  /* Paleta base: papel e grafite */
+  --color-neutral-0: #ffffff;
+  --color-neutral-25: #f6f7f3;
+  --color-neutral-50: #eef1ea;
+  --color-neutral-100: #e4e9e1;
+  --color-neutral-200: #d9ded6;
+  --color-neutral-300: #bcc6bd;
+  --color-neutral-600: #56685d;
+  --color-neutral-700: #3e5146;
+  --color-neutral-850: #2a3830;
+  --color-neutral-950: #1f2a24;
+
+  /* Sala de aula: lousa, giz, borracha (coral), sálvia e a madeira da régua */
+  --color-lousa-100: #dfe8e1;
+  --color-lousa-300: #8fa898;
+  --color-lousa-400: #2e6b4e;
+  --color-lousa-500: #22392e;
+  --color-lousa-600: #1a2d24;
+
+  --color-giz: #f1f3ee;
+  --color-giz-apagado: #c9d6cc;
+
+  --color-amarelo-100: #fbf0c9;
+  --color-amarelo-300: #f2d06b;
+  --color-amarelo-400: #e8c04f;
+  --color-amarelo-700: #6b5512;
+
+  --color-coral-100: #fbe3dc;
+  --color-coral-400: #e98c7a;
+  --color-coral-700: #8a3b2c;
+
+  --color-salvia-100: #e1eae3;
+  --color-salvia-400: #6f8c7b;
+  --color-salvia-700: #2f4a3c;
+
+  --color-madeira: #8a6a4a;
+  --color-pauta: #e3e9f0;
+
+  --color-warning-100: #fff0cc;
+  --color-warning-500: #714b13;
+  --color-danger-100: #ffe2de;
+  --color-danger-500: #94302b;
+
+  /* Tokens semânticos */
+  --color-canvas: var(--color-neutral-25);
+  --color-section: var(--color-neutral-50);
+  --color-surface: var(--color-neutral-0);
+  --color-surface-raised: var(--color-neutral-0);
+  --color-surface-muted: var(--color-neutral-100);
+  --color-surface-accent: var(--color-lousa-500);
+  --color-surface-accent-hover: var(--color-lousa-600);
+  --color-surface-accent-soft: var(--color-lousa-100);
+
+  --color-ink: var(--color-neutral-950);
+  --color-ink-secondary: var(--color-neutral-850);
+  --color-ink-tertiary: var(--color-neutral-700);
+  --color-ink-muted: var(--color-neutral-600);
+  --color-ink-inverse: var(--color-giz);
+  --color-ink-accent: var(--color-lousa-400);
+  --color-ink-accent-hover: var(--color-lousa-500);
+
+  --color-line: var(--color-neutral-200);
+  --color-line-subtle: var(--color-neutral-100);
+  --color-line-strong: var(--color-neutral-300);
+  --color-line-accent: var(--color-lousa-300);
+
+  --color-error-text: var(--color-danger-500);
+  --color-error-bg: var(--color-danger-100);
+
+  --color-focus: var(--color-lousa-400);
+
+  /* Raios: controles arredondados, fichas quase retas, lousa bem redonda no topo */
+  --radius-control: 12px;
+  --radius-card: 6px;
+  --radius-board: 28px;
+
+  /* Sombra de papel: uma borda dura embaixo, sem desfoque */
+  --shadow-raised: 0 2px 0 var(--color-neutral-200);
+  --shadow-pop: 0 0 0 1px var(--color-neutral-200), 0 18px 40px -20px rgb(31 42 36 / 0.45);
+}
+
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: var(--color-amarelo-300);
+  color: var(--color-neutral-950);
+}
+
+/* Ficha pautada: uma linha a cada 28px, alinhada com o texto em leading-7. */
+@utility pautado {
+  background-color: var(--color-surface);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 27px, var(--color-pauta) 27px 28px);
+}
+
+/* Faixa tracejada das fichas em lista de espera: traços na cor do texto (ex.: text-coral-400). */
+@utility tracejado {
+  background-color: var(--color-surface);
+  background-image: repeating-linear-gradient(to right, currentColor 0 20px, transparent 20px 32px);
+}
+
+/* Entrada do hero: o título aparece como se fosse escrito a giz, da esquerda para a direita. */
+@keyframes giz-escrita {
+  from {
+    clip-path: inset(-0.25em 100% -0.25em 0);
+  }
+  to {
+    clip-path: inset(-0.25em 0 -0.25em 0);
+  }
+}
+
+@keyframes giz-surge {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.anim-giz {
+  animation: giz-escrita 0.9s cubic-bezier(0.45, 0, 0.2, 1) both;
+}
+.anim-surge {
+  opacity: 0;
+  animation: giz-surge 0.5s ease-out 0.7s forwards;
+}
+.anim-surge-tarde {
+  animation-delay: 0.85s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-giz,
+  .anim-surge {
+    opacity: 1;
+    animation: none;
+    clip-path: none;
+  }
+}

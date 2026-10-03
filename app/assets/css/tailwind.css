@@ -1,0 +1,4 @@
+@import "./globals.css";
+
+/* Tailwind only scans app/ (Nuxt's Vite root), but the shared class helpers live in shared/utils. */
+@source "../../../shared";
