@@ -25,7 +25,7 @@ This repo ports the Aulaflix prototype from Next.js 16 to Nuxt 4. The reference 
 - `server/utils/`: the data layer from `src/lib` (cookie store, session, accounts, enrollments, purchases, waitlist), ported as a whole.
 - `server/api/`: one route per former Server Action. Components call it with `$fetch`, then `refreshNuxtData()`. See `docs/adr/0002-server-actions-become-api-routes.md`.
 - `app/components/`: one `.vue` file per React component, in the same folders (`aula/`, `auth/`, `compra/`, `curso/`) and with the same name. Path prefixes are off (`pathPrefix: false`), so `curso/CourseHero.vue` is `<CourseHero>`. React files that export several components (like `ui.tsx`) become one file per component.
-- Signed-in pages are guarded by a route middleware that does what `requireUser()` did: redirect to `/entrar?next=…`. `/aprender` still answers 404 when the student does not own the course.
+- Signed-in pages are guarded by a route middleware that does what `requireUser()` did: redirect to `/entrar?next=…`. `/aprender` still sends a student who does not own the course to its course page (`/cursos/<slug>`, 307), and answers 404 for an unknown course or lesson.
 
 ### Stack
 
