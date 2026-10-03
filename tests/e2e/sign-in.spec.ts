@@ -1,5 +1,6 @@
+import { createHash } from 'node:crypto'
 import { expect, test, type Page } from '@playwright/test'
-import { demoAccount, expectNoHorizontalScroll, getCookie, gotoHydrated, jsonCookie, signIn } from './helpers'
+import { demoAccount, expectNoHorizontalScroll, getCookie, gotoHydrated, jsonCookie, longEmail, setCookie, signIn } from './helpers'
 
 const card = (page: Page, name: string) => page.getByRole('region', { name })
 
@@ -177,6 +178,21 @@ test.describe('signing in with an existing account', () => {
     await submitEmail(page, '  AULAFLIX@Email.com ')
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Que bom ver você de novo')
   })
+
+  test('a long email wraps without horizontal scroll on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await setCookie(page, 'aulaflix_account', jsonCookie.encode({
+      name: 'Maria Souza',
+      email: longEmail,
+      passwordHash: createHash('sha256').update('senha-da-maria').digest('hex'),
+      verified: true,
+    }))
+    await gotoHydrated(page, '/entrar')
+    await submitEmail(page, longEmail)
+
+    await expect(page.getByText(`Digite a senha da conta ${longEmail}.`)).toBeVisible()
+    await expectNoHorizontalScroll(page)
+  })
 })
 
 test.describe('?next=', () => {
@@ -252,6 +268,15 @@ test.describe('creating an account', () => {
     await expect(page.getByText('A senha precisa de no mínimo 8 caracteres.')).toBeVisible()
     await page.getByLabel('Senha', { exact: true }).fill('12345678')
     await expect(page.getByText('A senha precisa de no mínimo 8 caracteres.')).toHaveCount(0)
+  })
+
+  test('a long email wraps without horizontal scroll on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await gotoHydrated(page, '/entrar')
+    await submitEmail(page, longEmail)
+
+    await expect(page.getByText(`Ainda não há conta com ${longEmail}. Falta só seu nome e uma senha.`)).toBeVisible()
+    await expectNoHorizontalScroll(page)
   })
 
   test('the server rejects a name longer than 80 characters', async ({ page }) => {

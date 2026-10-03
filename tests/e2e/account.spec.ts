@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { expect, test, type Page } from '@playwright/test'
-import { demoAccount, expectNoHorizontalScroll, getCookie, gotoHydrated, jsonCookie, setCookie, signIn } from './helpers'
+import { demoAccount, expectNoHorizontalScroll, getCookie, gotoHydrated, jsonCookie, longEmail, setCookie, signIn } from './helpers'
 
 /** An account created at sign-up, stored as the reference app stores it. It starts with no orders. */
 const createdAccount = {
@@ -312,3 +312,14 @@ for (const width of [1440, 390]) {
     await expectNoHorizontalScroll(page)
   })
 }
+
+test('a long email wraps without horizontal scroll on mobile when changing the password', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await setCookie(page, 'aulaflix_account', jsonCookie.encode({ ...createdAccount, email: longEmail }))
+  await signIn(page, longEmail)
+  await gotoHydrated(page, '/conta')
+  await page.getByRole('button', { name: 'Trocar senha' }).click()
+
+  await expect(page.getByText(`Digite o código que mandamos para ${longEmail} e escolha a nova senha.`)).toBeVisible()
+  await expectNoHorizontalScroll(page)
+})

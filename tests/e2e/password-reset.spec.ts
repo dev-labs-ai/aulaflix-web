@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test'
-import { expectNoHorizontalScroll, gotoHydrated, signIn } from './helpers'
+import { expectNoHorizontalScroll, gotoHydrated, longEmail, signIn } from './helpers'
 
 const path = '/redefinir-senha'
 const email = 'maria@exemplo.com'
@@ -13,9 +13,9 @@ const newPassword = (page: Page) => page.getByLabel('Nova senha', { exact: true 
 const confirmPassword = (page: Page) => page.getByLabel('Repita a nova senha')
 
 /** Goes through the email step to the new-password step. */
-async function requestCode(page: Page) {
+async function requestCode(page: Page, address = email) {
   await gotoHydrated(page, path)
-  await page.getByLabel('E-mail').fill(email)
+  await page.getByLabel('E-mail').fill(address)
   await page.getByRole('button', { name: 'Receber código' }).click()
   await expect(page.getByRole('heading', { level: 1, name: 'Defina uma nova senha' })).toBeVisible()
 }
@@ -281,6 +281,17 @@ test.describe('password reset, new code', () => {
     await expect(codeBoxes(page)).toHaveText(['', '', '', '', '', ''])
     await expect(countdown('1:00')).toBeDisabled()
   })
+
+  test('a long email wraps without horizontal scroll on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.clock.install()
+    await requestCode(page, longEmail)
+    await page.clock.fastForward('01:00')
+    await page.getByRole('button', { name: 'Pedir outro código', exact: true }).click()
+
+    await expect(page.getByRole('status').filter({ hasText: `Mandamos um novo código para ${longEmail}.` })).toBeVisible()
+    await expectNoHorizontalScroll(page)
+  })
 })
 
 test('a signed-in student is sent to the home page', async ({ page }) => {
@@ -299,8 +310,7 @@ for (const width of [1440, 390]) {
     await gotoHydrated(page, path)
     await expectNoHorizontalScroll(page)
 
-    // A long email overflows the heading at 390px in both apps, as on /entrar (#26).
-    await page.getByLabel('E-mail').fill(email)
+    await page.getByLabel('E-mail').fill(longEmail)
     await page.getByRole('button', { name: 'Receber código' }).click()
     await expect(page.getByRole('heading', { level: 1, name: 'Defina uma nova senha' })).toBeVisible()
     await expectNoHorizontalScroll(page)
