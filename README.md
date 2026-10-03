@@ -43,6 +43,8 @@ BASE_URL=http://localhost:3001 pnpm test:e2e     # este app, já rodando na 3001
 pnpm test:e2e                                    # este app: reusa o que estiver na 3001 ou serve a build de produção (rode pnpm build antes)
 ```
 
+Os testes entram na conta definindo o cookie de sessão, como faz `signIn` em `tests/e2e/helpers.ts`; só os testes de login e cadastro passam por `/entrar`.
+
 O CI (`.github/workflows/ci.yml`) roda lint, typecheck, build e e2e em cada pull request.
 
 ## Rotas
@@ -71,3 +73,11 @@ Direção "Lousa": a sala de aula como referência. Fundo de papel, texto em gra
 - **Lousa:** painel verde com a régua de madeira embaixo (`app/components/Board.vue`), usado no topo da home (com os botões de área, que abrem o catálogo filtrado), da página de curso (com o título, o preço e o botão de compra) e no "Continuar de onde parou" de Meus cursos. Os títulos aparecem como se fossem escritos a giz.
 - **Fichas pautadas:** os cursos são fichas com linhas a cada 28px (`pautado`) e uma faixa no topo na cor do curso (`tone` em `courses.ts`: coral, amarelo ou sálvia). Nos cursos em lista de espera, a faixa é tracejada (`tracejado`).
 - **Giz amarelo:** botão principal sobre a lousa, avatar, marcadores e selos de destaque.
+
+## Login e cadastro
+
+Para a conta de demonstração, use **aulaflix@email.com** com a senha **aulaflix**. A sessão fica num cookie `httpOnly` por 7 dias; com ela, o header mostra o usuário e o menu da conta, com Meus cursos, Conta e Sair. Os cookies têm os mesmos nomes, formatos e prazos do app de referência, então uma sessão aberta num app vale no outro.
+
+A conta criada no cadastro fica num cookie deste navegador (com a senha em hash), e só uma por vez: um novo cadastro substitui a anterior. Ela começa sem cursos e com o e-mail por confirmar; enquanto isso, uma faixa abaixo do header (`app/components/EmailConfirmationNotice.vue`) pede a confirmação, sem bloquear nada, e oferece um botão de protótipo que faz o papel do link do e-mail.
+
+As contas e a sessão ficam em `server/utils/auth.ts`; os cursos e o progresso inicial da conta de demonstração, em `server/utils/enrollments.ts` (as aulas concluídas e a última aula aberta de cada curso ficam em cookies deste navegador; é daí que sai o "Continuar de onde parou"), e os pedidos, em `server/utils/purchases.ts` (os feitos em `/cursos/[slug]/comprar` também ficam num cookie). Os cursos do aluno são os que aparecem nos pedidos dele. As páginas sabem quem entrou por `/api/auth/session` (`app/composables/useSessionUser.ts`), e cada Server Action do app de referência virou uma rota em `server/api/`, chamada com `$fetch` e seguida de `refreshNuxtData()` (`docs/adr/0002-server-actions-become-api-routes.md`). É uma simulação: o cookie guarda só o e-mail e não é protegido contra falsificação, então deve ser substituído por um backend de autenticação real (`docs/adr/0001-keep-the-simulated-backend.md`).
