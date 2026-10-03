@@ -56,7 +56,8 @@ As rotas entram nesta tabela à medida que são portadas.
 | `/` | `app/pages/index.vue` |
 | `/como-funciona` | `app/pages/como-funciona.vue` |
 | `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
-| `/cursos/[slug]` (7 cursos) | `app/pages/cursos/[slug].vue`, com as partes em `app/components/curso/` |
+| `/cursos/[slug]` (7 cursos) | `app/pages/cursos/[slug]/index.vue`, com as partes em `app/components/curso/` |
+| `/cursos/[slug]/comprar` (cursos à venda) | `app/pages/cursos/[slug]/comprar.vue`, com o pagamento em `app/components/compra/PaymentForm.vue` e a rota em `server/api/checkout.post.ts` |
 | `/meus-cursos` (só logado) | `app/pages/meus-cursos.vue`, com os dados de `server/api/enrollments.get.ts` |
 | `/aprender/[curso]` (só para quem tem o curso) | `app/pages/aprender/[curso]/index.vue`, que leva à aula onde o aluno parou |
 | `/aprender/[curso]/[aula]` (só para quem tem o curso) | `app/pages/aprender/[curso]/[aula].vue`, com as partes em `app/components/aula/` e as rotas em `server/api/learning/` |
@@ -98,4 +99,4 @@ As contas e a sessão ficam em `server/utils/auth.ts`; os cursos e o progresso i
 
 ## Limitações do protótipo
 
-Fora o login, o cadastro e a lista de espera, os formulários (Google/GitHub, redefinição de senha) são só visuais: validam no navegador e mostram um estado de confirmação, mas não enviam nada. A lista de espera guarda a inscrição num cookie deste navegador (`server/utils/waitlist.ts`, com as rotas em `server/api/waitlist/`): com a conta, basta um clique em "Avise-me"; sem ela, só o e-mail. Nenhum e-mail é enviado de verdade. O player da aula grátis também é só visual: ainda não há vídeos. Na redefinição de senha, qualquer código de 6 dígitos é aceito.
+Fora o login, o cadastro, a compra e a lista de espera, os formulários (Google/GitHub, redefinição de senha) são só visuais: validam no navegador e mostram um estado de confirmação, mas não enviam nada. A compra não cobra nada: o pedido é aprovado na hora, e os dados do cartão são validados no navegador e nem chegam ao servidor. A lista de espera guarda a inscrição num cookie deste navegador (`server/utils/waitlist.ts`, com as rotas em `server/api/waitlist/`): com a conta, basta um clique em "Avise-me"; sem ela, só o e-mail. Nenhum e-mail é enviado de verdade. O player da aula grátis também é só visual: ainda não há vídeos. Na redefinição de senha, qualquer código de 6 dígitos é aceito.

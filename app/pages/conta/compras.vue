@@ -87,7 +87,7 @@ const cards = computed(() =>
           {{ copy.includes }}
         </p>
         <p class="mt-1 text-[15px] leading-[1.6] text-ink-tertiary">
-          {{ listCourses(purchase.courses) }}
+          {{ listCourses(purchase.courses.map(course => course.title)) }}
         </p>
       </div>
     </li>
