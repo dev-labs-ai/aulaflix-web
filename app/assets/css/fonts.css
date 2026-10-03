@@ -1,0 +1,8 @@
+/*
+ * The font variables that globals.css reads, set on <html> as next/font does in the reference app.
+ * @nuxt/fonts sees these declarations and adds the @font-face rules for both families.
+ */
+:root {
+  --font-bricolage: "Bricolage Grotesque";
+  --font-atkinson: "Atkinson Hyperlegible Next";
+}

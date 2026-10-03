@@ -1,75 +1,73 @@
-# Nuxt Minimal Starter
+# Aulaflix
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Protótipo do site do Aulaflix, uma plataforma de cursos online para desenvolvedores de software (backend, frontend, banco de dados, DevOps, IA e outras áreas). A estrutura das páginas partiu de uma réplica de [programe.ai](https://programe.ai/); a identidade visual é própria (veja abaixo). Textos e cursos são conteúdo de exemplo e as capas são placeholders.
 
-## Setup
+Este repositório porta o protótipo de Next.js 16 para Nuxt 4. O app de referência é [`dev-labs-ai/aulaflix`](https://github.com/dev-labs-ai/aulaflix): até o porte chegar à paridade, os dois rodam lado a lado e a mesma suíte e2e roda contra os dois. As convenções do porte estão em `CLAUDE.md`.
 
-Make sure to install dependencies:
+Stack: Nuxt 4 (Vue 3, SSR com servidor Nitro) · Tailwind CSS v4 · TypeScript · @lucide/vue · Playwright.
+
+## Rodando
 
 ```bash
-# npm
-npm install
-
-# pnpm
 pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+pnpm dev        # http://localhost:3001
+pnpm build      # build de produção; sirva com PORT=3001 node .output/server/index.mjs
+pnpm lint
+pnpm typecheck
 ```
 
-## Development Server
+### Lado a lado com o app de referência
 
-Start the development server on `http://localhost:3000`:
+O app de referência roda na porta 3000 e este, na 3001:
 
 ```bash
-# npm
-npm run dev
+# num clone de dev-labs-ai/aulaflix
+pnpm install
+pnpm dev        # http://localhost:3000
 
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
+# neste repositório
+pnpm dev        # http://localhost:3001
 ```
 
-## Production
+No `localhost`, os cookies valem para as duas portas: uma sessão aberta num app vale no outro.
 
-Build the application for production:
+### Testes e2e
+
+Os testes ficam em `tests/e2e/` e rodam contra qualquer um dos dois apps: só muda o endereço base, em `BASE_URL`.
 
 ```bash
-# npm
-npm run build
+pnpm exec playwright install chromium            # uma vez
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+BASE_URL=http://localhost:3000 pnpm test:e2e     # app de referência
+BASE_URL=http://localhost:3001 pnpm test:e2e     # este app, já rodando na 3001
+pnpm test:e2e                                    # este app: reusa o que estiver na 3001 ou serve a build de produção (rode pnpm build antes)
 ```
 
-Locally preview production build:
+O CI (`.github/workflows/ci.yml`) roda lint, typecheck, build e e2e em cada pull request.
 
-```bash
-# npm
-npm run preview
+## Rotas
 
-# pnpm
-pnpm preview
+As rotas entram nesta tabela à medida que são portadas.
 
-# yarn
-yarn preview
+O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria.
 
-# bun
-bun run preview
-```
+## Onde mudar as coisas
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- **Marca, título e descrição do site, menu:** `shared/content/site.ts`
+- **Lista de cursos (título, área, resumo, status, ícone, cor, capa) e áreas do filtro do catálogo:** `shared/content/courses.ts`
+- **Conteúdo de cada curso (ementa, aula grátis, preços, FAQ do curso):** `shared/content/course-details/<slug>.ts`
+- **Como funciona (passos, lista de espera e dúvidas que valem para todos os cursos):** `shared/content/how-it-works.ts`. Cada passo tem o resumo da home (`summary`) e o texto da página `/como-funciona` (`details`). As dúvidas de um curso só ficam no `faq` dele; as que valem para todos, em `platformFaq`.
+- **Home:** os botões de área da lousa saem de `areas` em `shared/content/courses.ts`, com os ícones de `areaIcons` em `app/utils/placeholders.ts`.
+- **Login, cadastro e redefinição de senha (textos, mensagens de erro, regras de senha e código):** `shared/content/auth.ts`
+- **Cores, raios, sombras, animações:** `app/assets/css/globals.css` (tokens `@theme` do Tailwind)
+- **Fontes:** `fonts` em `nuxt.config.ts` e `app/assets/css/fonts.css` (Bricolage Grotesque nos títulos, Atkinson Hyperlegible Next no texto)
+- **Logo e favicon:** `app/components/Logo.vue` (com a marca em `app/components/LogoMark.vue`) e `public/icon.svg`
+- **Imagens:** `app/components/CourseCoverPlaceholder.vue` gera os placeholders, com os ícones e as cores de cada curso em `app/utils/placeholders.ts`.
+
+## Identidade visual
+
+Direção "Lousa": a sala de aula como referência. Fundo de papel, texto em grafite e verde de quadro-negro como cor principal.
+
+- **Lousa:** painel verde com a régua de madeira embaixo (`app/components/Board.vue`), usado no topo da home (com os botões de área, que abrem o catálogo filtrado), da página de curso (com o título, o preço e o botão de compra) e no "Continuar de onde parou" de Meus cursos. Os títulos aparecem como se fossem escritos a giz.
+- **Fichas pautadas:** os cursos são fichas com linhas a cada 28px (`pautado`) e uma faixa no topo na cor do curso (`tone` em `courses.ts`: coral, amarelo ou sálvia). Nos cursos em lista de espera, a faixa é tracejada (`tracejado`).
+- **Giz amarelo:** botão principal sobre a lousa, avatar, marcadores e selos de destaque.
