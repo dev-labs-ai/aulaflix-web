@@ -17,7 +17,6 @@ const courseList = (page: Page) => page.getByRole('list', { name: 'Cursos' })
 const filterGroup = (page: Page, label: 'Área' | 'Situação') =>
   page.getByRole('navigation', { name: 'Filtrar cursos' }).getByRole('list', { name: label })
 
-// Scoped to <main>, because Nuxt's route announcer is a status region too (#18).
 const resultCount = (page: Page) => page.getByRole('main').getByRole('status')
 
 async function expectTitles(page: Page, titles: string[]) {
