@@ -58,6 +58,7 @@ As rotas entram nesta tabela à medida que são portadas.
 | `/cursos` (filtros `?area=` e `?situacao=a-venda\|em-breve`) | `app/pages/cursos/index.vue` |
 | `/cursos/[slug]` (7 cursos) | `app/pages/cursos/[slug].vue`, com as partes em `app/components/curso/` |
 | `/entrar` (entrar e criar conta) | `app/pages/entrar.vue` (sem header/rodapé), com o fluxo em `app/components/auth/` |
+| `/redefinir-senha` | `app/pages/redefinir-senha.vue` (sem header/rodapé), com o fluxo em `app/components/auth/PasswordResetFlow.vue` |
 
 O layout `app/layouts/default.vue` aplica header e rodapé (`app/components/SiteShell.vue`). Endereços inexistentes caem em `app/error.vue`, a página 404, que fica fora dos layouts e monta header e rodapé por conta própria. O mesmo vale para o 404 que uma página dispara (ex.: curso que não existe), onde o app de referência repete header e rodapé (#21). As telas de autenticação ficam sem header e rodapé (`layout: false`). `/cadastrar` redireciona para `/entrar` (`routeRules` em `nuxt.config.ts`).
 
@@ -92,4 +93,4 @@ As contas e a sessão ficam em `server/utils/auth.ts`; os cursos e o progresso i
 
 ## Limitações do protótipo
 
-Os botões do Google e do GitHub são só visuais: avisam que a autenticação ainda não está disponível. A lista de espera guarda a inscrição num cookie deste navegador (`server/utils/waitlist.ts`, com as rotas em `server/api/waitlist/`): com a conta, basta um clique em "Avise-me"; sem ela, só o e-mail. Nenhum e-mail é enviado de verdade. O player da aula grátis também é só visual: ainda não há vídeos.
+Fora o login, o cadastro e a lista de espera, os formulários (Google/GitHub, redefinição de senha) são só visuais: validam no navegador e mostram um estado de confirmação, mas não enviam nada. A lista de espera guarda a inscrição num cookie deste navegador (`server/utils/waitlist.ts`, com as rotas em `server/api/waitlist/`): com a conta, basta um clique em "Avise-me"; sem ela, só o e-mail. Nenhum e-mail é enviado de verdade. O player da aula grátis também é só visual: ainda não há vídeos. Na redefinição de senha, qualquer código de 6 dígitos é aceito.
