@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { Menu, X } from '@lucide/vue'
+import { accountMenu } from '#shared/content/account'
 import { authCopy } from '#shared/content/auth'
 import { mainNav } from '#shared/content/site'
+
+/** `user` vem do servidor (cookie de sessão); `null` mostra o botão Entrar. */
+const { user } = defineProps<{ user: SessionUser | null }>()
 
 // NuxtLink marks the link to the current page with aria-current="page"; the reference app's header doesn't,
 // so the nav links pass `:aria-current="undefined"`.
@@ -18,6 +22,9 @@ const closeMenu = () => {
 const toggleMenu = () => {
   openPath.value = open.value ? null : route.path
 }
+
+// No celular, quem está logado também vê os atalhos da conta junto do menu principal.
+const mobileLinks = computed(() => (user ? [...mainNav, ...accountMenu.links] : mainNav))
 </script>
 
 <template>
@@ -44,7 +51,12 @@ const toggleMenu = () => {
       </nav>
 
       <div class="hidden items-center gap-3 md:flex">
+        <AccountMenu
+          v-if="user"
+          :user="user"
+        />
         <NuxtLink
+          v-else
           to="/entrar"
           :class="cn(
             'inline-flex h-11 items-center justify-center whitespace-nowrap rounded-control bg-surface-accent px-5 text-[16px] font-bold text-ink-inverse transition-colors duration-150 hover:bg-surface-accent-hover',
@@ -88,7 +100,7 @@ const toggleMenu = () => {
           class="flex flex-col gap-1"
         >
           <NuxtLink
-            v-for="item in mainNav"
+            v-for="item in mobileLinks"
             :key="item.href"
             :to="item.href"
             :class="cn(navLink, 'py-2.5 text-[17px]')"
@@ -96,13 +108,18 @@ const toggleMenu = () => {
             @click="closeMenu"
           >
             {{ item.label }}<span
-              v-if="item.badge"
+              v-if="'badge' in item && item.badge"
               :class="navBadge"
             >{{ item.badge }}</span>
           </NuxtLink>
         </nav>
         <div class="mt-3 border-t border-line-subtle pt-4">
+          <MobileAccountPanel
+            v-if="user"
+            :user="user"
+          />
           <NuxtLink
+            v-else
             to="/entrar"
             class="inline-flex h-12 w-full items-center justify-center rounded-control bg-surface-accent text-[16px] font-bold text-ink-inverse"
             @click="closeMenu"

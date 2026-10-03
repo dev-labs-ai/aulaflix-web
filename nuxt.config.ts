@@ -18,8 +18,11 @@ export default defineNuxtConfig({
   devServer: { port: 3001 },
   compatibilityDate: '2025-07-15',
   vite: { plugins: [tailwindcss()] },
+  // The reference app compiles without noUncheckedIndexedAccess, and the code ported from it
+  // (shared/content unchanged, the data layer in server/utils) relies on that.
+  nitro: { typescript: { tsConfig: { compilerOptions: { noUncheckedIndexedAccess: false } } } },
   typescript: {
-    // shared/content is copied unchanged from the reference app, which compiles without this flag.
+    tsConfig: { compilerOptions: { noUncheckedIndexedAccess: false } },
     sharedTsConfig: { compilerOptions: { noUncheckedIndexedAccess: false } },
   },
   fonts: {
