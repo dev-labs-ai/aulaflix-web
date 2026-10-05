@@ -31,6 +31,18 @@ Os testes entram na conta definindo o cookie de sessão, como faz `signIn` em `t
 
 O CI (`.github/workflows/ci.yml`) roda lint, typecheck, build e e2e em cada pull request.
 
+### Imagem
+
+O `Dockerfile` gera a imagem do site: o servidor Nitro de `.output/` rodando em Node, com o usuário sem privilégios `node`, na porta 3000. O CI constrói a imagem em cada pull request e, na `main`, depois de lint, typecheck, build e e2e, publica em `ghcr.io/dev-labs-ai/aulaflix-web` com as tags `latest` e `sha-<commit>`. O perfil `full` do Compose do [`aulaflix-api`](https://github.com/dev-labs-ai/aulaflix-api) roda essa imagem. Ele conta com o `sh` da imagem e inicia o servidor com `node .output/server/index.mjs` a partir do diretório de trabalho.
+
+```bash
+docker build -t aulaflix-web .
+docker run --rm -p 3001:3000 aulaflix-web    # http://localhost:3001
+BASE_URL=http://localhost:3001 pnpm test:e2e  # os e2e contra o contêiner
+```
+
+Use `localhost` no `BASE_URL`, e não `127.0.0.1`: na build de produção os cookies são `Secure`, e em `http://127.0.0.1` os testes não os encontram. O `docker stop` encerra o servidor sem cortar requisições: o Nitro trata o SIGTERM e espera as que estão em andamento terminarem, por até 30 segundos.
+
 ## Rotas
 
 | Rota | Arquivo |
