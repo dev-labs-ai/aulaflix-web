@@ -1,0 +1,24 @@
+# Build output and dependencies, which the image builds itself
+node_modules
+.nuxt
+.output
+.nitro
+.cache
+.data
+dist
+
+# Tests, reports and repo metadata the build doesn't read
+tests
+test-results
+playwright-report
+blob-report
+.git
+.github
+.idea
+.fleet
+.claude
+*.log
+
+# Local env files
+.env
+.env.*
